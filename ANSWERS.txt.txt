@@ -1,0 +1,11 @@
+1. Condiciones de carrera:
+    - Si dos snakes llegan al tiempo y colapsan con un objeto:
+	Regiones Criticas: Los metodos de cada una de las serpientes que se encargan de calcular si la serpiente esta a punto de encontrarse un objeto. 
+    	Solucion: Sincronizar los metodos de Snake que calculan si la serpiente esta sobre un objeto diferente que pueda presentar este problema, de esta forma solo se calcula por orden si esta cogiendo alguno de estos.
+
+2. Mal uso de estructuras de datos:
+    - Modificación concurrente en la coleccion no concurrente.
+    	Solucion: Cambiar la coleccion no concurrente "LinkedList", por una concurrente "ConcurrentLinkedDeque".
+3. Esperas Activas:
+    - Espera activa para no terminar la ejecucion antes de que se mueran todas las
+    serpientes.
