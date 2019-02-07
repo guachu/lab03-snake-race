@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 /**
  * @author jd-
  *
@@ -38,6 +40,9 @@ public class SnakeApp {
     int nr_selected = 0;
     Thread[] thread = new Thread[MAX_THREADS];
 
+    private JButton startButton, pauseButton, resumeButton;
+    private boolean started;
+    
     public SnakeApp() {
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
         frame = new JFrame("The Snake Race");
@@ -55,9 +60,20 @@ public class SnakeApp {
         
         JPanel actionsBPabel=new JPanel();
         actionsBPabel.setLayout(new FlowLayout());
-        actionsBPabel.add(new JButton("Action "));
+        
+        //buttons
+        startButton = new JButton("Start");
+        pauseButton = new JButton("Pause");
+        resumeButton = new JButton("Resume");
+        //actions
+        actionsBPabel.add(startButton);
+        actionsBPabel.add(pauseButton);
+        actionsBPabel.add(resumeButton);
+        
         frame.add(actionsBPabel,BorderLayout.SOUTH);
 
+        started = false;
+        prepareActions();
     }
 
     public static void main(String[] args) {
@@ -74,7 +90,7 @@ public class SnakeApp {
             snakes[i] = new Snake(i + 1, spawn[i], i + 1);
             snakes[i].addObserver(board);
             thread[i] = new Thread(snakes[i]);
-            thread[i].start();
+            //thread[i].start();
         }
 
         frame.setVisible(true);
@@ -104,5 +120,44 @@ public class SnakeApp {
     public static SnakeApp getApp() {
         return app;
     }
+    
+    public void prepareActions(){
+        startButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(!started)start();
+                started = true;
+            }
+        });
+        
+        pauseButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                pause();
+            }
+        });
+
+         resumeButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                resume();
+            }
+        });
+    }
+    
+    public void start(){
+        for (int i = 0; i < MAX_THREADS; i++){
+            thread[i].start();
+        }
+    }
+
+     public void pause(){
+        for (int i = 0; i < MAX_THREADS; i++){
+            snakes[i].lock();
+        }
+    }
+
+     public void resume(){
+        for (int i = 0; i < MAX_THREADS; i++){
+            snakes[i].unlock();
+        }
+    }	    
 
 }

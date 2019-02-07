@@ -6,6 +6,8 @@ import java.util.Random;
 
 import enums.Direction;
 import enums.GridSize;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Snake extends Observable implements Runnable {
 
@@ -51,22 +53,33 @@ public class Snake extends Observable implements Runnable {
     @Override
     public void run() {
         while (!snakeEnd) {
-            
-            snakeCalc();
+            if(!isLocked){
+                snakeCalc();
 
-            //NOTIFY CHANGES TO GUI
-            setChanged();
-            notifyObservers();
-
-            try {
-                if (hasTurbo == true) {
-                    Thread.sleep(500 / 3);
-                } else {
-                    Thread.sleep(500);
+                //NOTIFY CHANGES TO GUI
+                setChanged();
+                notifyObservers();
+                try {
+                    if (hasTurbo == true) {
+                        Thread.sleep(500 / 3);
+                    } else {
+                        Thread.sleep(500);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            }else{
+                synchronized(locker){
+                    try {
+                        locker.wait();
+                    } catch (InterruptedException e) {
+                        Logger.getLogger(Snake.class.getName()).log(Level.SEVERE, null, e);
+                    }
+                }
             }
+            
+
+            
 
         }
         
